@@ -1,5 +1,6 @@
 #!/bin/bash
 # Script to create a new apache web site at a subdomain on a raspberry pi
+PRIMARY_IP='192.168.1.5'
 
 if [[ "$@" =~ "?" ]]; then
   echo "Create an apache website ready to use:"
@@ -28,7 +29,6 @@ fi
 #Set up folders
 echo Creating site folders . . .
 mkdir /var/www/$1
-chown -R www-data:www-data /var/www/$1
 
 echo Creating site config . . .
 #Set up config
@@ -50,7 +50,7 @@ echo Reloading apache . . .
 service apache2 restart
 echo Done!
 #Update local DNS
-echo "192.168.1.5     $1.local" >> /etc/hosts
+echo "$PRIMARY_IP     $1.local" >> /etc/hosts
 
 #Optionally hydrate from git hub
 if [ ! -z "$3" ]; then 
@@ -58,6 +58,8 @@ if [ ! -z "$3" ]; then
   cd "/var/www/$1"
   git clone $3 .
 fi
+#Fix permissions
+chown -R pi:www-data /var/www/$1
 
 echo
 echo All done!
