@@ -20,7 +20,7 @@ if !errorlevel! neq 0 (
 	powershell sleep -s 10
 )
 
-echo Mapping Drive...
+echo Mapping Drive %shareserver%\%sharepath%...
 net use h: /delete > nul 2>&1
 if "%1" neq "" (
 	net use h: \\%shareserver%\%sharepath% /user:%1 /persistent:no
