@@ -1,0 +1,69 @@
+#!/bin/bash
+# Script to create a new apache web site at a subdomain on a raspberry pi
+PRIMARY_IP='192.168.1.5'
+
+if [[ "$@" =~ "?" ]]; then
+  echo "Create an apache website ready to use:"
+  echo "- Pass subdomain as first argument"
+  echo "- Pass domain as second argument"
+  echo "- Optionally pass GIT clone URL to use to hydrate site as third argument"
+  echo "eg: make-site newsite mydomain.com https://github.com/user/repo.git"
+  exit
+fi
+
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root"
+  exit
+fi
+
+if [ -z "$1" ]; then
+  echo "Pass subdomain as first argument"
+  exit
+fi
+
+if [ -z "$2" ]; then
+  echo "Pass domain as second argument"
+  exit
+fi
+
+#Set up folders
+echo Creating site folders . . .
+mkdir /var/www/$1
+
+echo Creating site config . . .
+#Set up config
+CONF_FILE="/etc/apache2/sites-available/$1.$2.conf"
+touch $CONF_FILE
+echo "<VirtualHost *:80>" >> $CONF_FILE
+echo "ServerName $1.$2" >> $CONF_FILE
+echo "DocumentRoot /var/www/$1" >> $CONF_FILE
+echo "</VirtualHost>" >> $CONF_FILE
+echo "" >> $CONF_FILE
+echo "<VirtualHost *:80>" >> $CONF_FILE
+echo "ServerName $1.local" >> $CONF_FILE
+echo "DocumentRoot /var/www/$1" >> $CONF_FILE
+echo "</VirtualHost>" >> $CONF_FILE
+
+#Inform Apache
+a2ensite $1.$2 
+echo Reloading apache . . .
+service apache2 restart
+echo Done!
+#Update local DNS
+echo "$PRIMARY_IP     $1.local" >> /etc/hosts
+
+#Optionally hydrate from git hub
+if [ ! -z "$3" ]; then 
+  echo "Fetching site contents from $3 . . ."
+  cd "/var/www/$1"
+  git clone $3 .
+fi
+#Fix permissions
+chown -R pi:www-data /var/www/$1
+
+echo
+echo All done!
+echo Your site, $1, is available at http://$1.local
+echo Update your public name servers to go live at http://$1.$2
+echo
+
