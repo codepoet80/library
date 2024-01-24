@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+  then
+    echo "No URL specified. Pass URL to trace as an argument."
+    exit -1
+fi
+curl -s -L -D - $1 -o /dev/null -w '%{url_effective}'
+echo
