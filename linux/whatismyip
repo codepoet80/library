@@ -1,4 +1,7 @@
 #!/bin/bash
+curl icanhazip.com
+#curl api.ipify.org
+exit
 nslookup myip.opendns.com resolver1.opendns.com
 if [ "$1" = "-c" ]; then
 	type xclip >/dev/null 2>&1 || { echo >&2 "xclip not found."; exit 1; }
