@@ -1,6 +1,6 @@
 #!/bin/bash
 if [[ -z "${JOURNAL}" ]]; then
-	todayPath="$HOME"
+	todayPath="$HOME/Desktop"
 else
 	todayPath="${JOURNAL}"
 fi
@@ -19,5 +19,5 @@ echo >> $todayFile
 echo
 echo "Journaled to: $todayFile"
 if [ $new -eq 0 ]; then
-    cat $todayFile
+    tail $todayFile
 fi
