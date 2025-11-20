@@ -1,5 +1,10 @@
 #!/bin/bash
-todayFile="$HOME/$(date +%F)-journal.gmi"
+if [[ -z "${JOURNAL}" ]]; then
+	todayPath="$HOME"
+else
+	todayPath="${JOURNAL}"
+fi
+todayFile="$todayPath/$(date +%F)-journal.gmi"
 new=0
 if [ ! -f "$todayFile" ]; then
     touch "$todayFile"
@@ -15,4 +20,3 @@ echo "Journaled to: $todayFile"
 if [ $new -eq 0 ]; then
     cat $todayFile
 fi
-
