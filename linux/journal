@@ -27,6 +27,12 @@ if [ "$#" -eq 0 ]; then
 	exit
 fi
 
+# If the input is a command, do that
+if [ "$1" == "nano" ]; then
+	nano $todayFile
+	exit
+fi
+
 # If the file is new add a title
 if [ $new -eq 1 ]; then
 	# Make up a title unless the input has one
