@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# Figure out the file path
 if [[ -z "${JOURNAL}" ]]; then
 	todayPath="$HOME/Desktop"
 else
@@ -6,13 +8,31 @@ else
 fi
 todayFile="$todayPath/$(date +%F)-journal.gmi"
 new=0
+
+# Check if the file exists
 if [ ! -f "$todayFile" ]; then
-    touch "$todayFile"
-    new=1
+	# Create it if needed
+	if [ ! "$#" -eq 0 ]; then
+		touch "$todayFile"
+		new=1
+	else
+		echo "No journal yet today"
+		exit
+	fi
 fi
+
+# If there's no input just cat the file
 if [ "$#" -eq 0 ]; then
-    cat $todayFile
-    exit
+	cat $todayFile
+	exit
+fi
+
+# If the file is new add a title
+if [ $new -eq 1 ]; then
+	# Make up a title unless the input has one
+	if [[ ! "$@" == *"# "* ]]; then
+		echo "# $(date +%F) - Journal" >> $todayFile
+	fi
 fi
 echo "$@" >> $todayFile
 echo >> $todayFile
