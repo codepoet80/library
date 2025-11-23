@@ -38,6 +38,7 @@ if [ $new -eq 1 ]; then
 	# Make up a title unless the input has one
 	if [[ ! "$@" == *"# "* ]]; then
 		echo "# $(date +%F) - Journal" >> $todayFile
+		echo >> $todayFile
 	fi
 fi
 echo "$@" >> $todayFile
